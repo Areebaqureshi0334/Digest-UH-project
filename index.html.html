@@ -1,0 +1,1001 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digest-U/H | FYP Portfolio - AI Educational Summarizer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --accent: #ec4899;
+            --accent-light: #f472b6;
+            --dark: #0f172a;
+            --dark-secondary: #1e293b;
+            --light: #f1f5f9;
+            --text-primary: #ffffff;
+            --text-secondary: #cbd5e1;
+            --success: #10b981;
+            --warning: #f59e0b;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--dark) 0%, #1a1f3a 100%);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Animated background elements */
+        .background-orbs {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0.1;
+            filter: blur(40px);
+        }
+
+        .orb-1 {
+            width: 400px;
+            height: 400px;
+            background: var(--primary);
+            top: -100px;
+            left: -100px;
+            animation: float 20s ease-in-out infinite;
+        }
+
+        .orb-2 {
+            width: 300px;
+            height: 300px;
+            background: var(--accent);
+            bottom: -50px;
+            right: -50px;
+            animation: float 25s ease-in-out infinite reverse;
+        }
+
+        .orb-3 {
+            width: 250px;
+            height: 250px;
+            background: var(--primary);
+            top: 50%;
+            right: 10%;
+            animation: float 22s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0); }
+            33% { transform: translate(30px, -30px); }
+            66% { transform: translate(-20px, 20px); }
+        }
+
+        /* Content container */
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header Navigation */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 30px 0;
+            margin-bottom: 60px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            animation: slideDown 0.8s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -1px;
+        }
+
+        nav {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+        }
+
+        nav a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            transition: color 0.3s ease;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            padding-bottom: 5px;
+        }
+
+        nav a:hover {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+
+        /* Hero Section */
+        .hero {
+            margin-bottom: 100px;
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hero-content {
+            max-width: 800px;
+            margin-bottom: 60px;
+        }
+
+        .hero h1 {
+            font-size: 56px;
+            font-weight: 900;
+            margin-bottom: 20px;
+            line-height: 1.2;
+            background: linear-gradient(135deg, #ffffff 0%, var(--primary) 50%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero p {
+            font-size: 18px;
+            color: var(--text-secondary);
+            margin-bottom: 30px;
+            max-width: 600px;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 14px 32px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            box-shadow: 0 8px 24px rgba(99, 102, 241, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 32px rgba(99, 102, 241, 0.4);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+        }
+
+        .btn-secondary:hover {
+            background: var(--primary);
+            color: white;
+            transform: translateY(-3px);
+        }
+
+        /* Stats Section */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 30px;
+            margin-bottom: 100px;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            padding: 30px;
+            border-radius: 12px;
+            text-align: center;
+            transition: all 0.3s ease;
+            animation: slideUp 0.8s ease-out;
+            animation-fill-mode: both;
+        }
+
+        .stat-card:nth-child(1) { animation-delay: 0.2s; }
+        .stat-card:nth-child(2) { animation-delay: 0.3s; }
+        .stat-card:nth-child(3) { animation-delay: 0.4s; }
+        .stat-card:nth-child(4) { animation-delay: 0.5s; }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .stat-card:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: var(--primary);
+            transform: translateY(-5px);
+        }
+
+        .stat-number {
+            font-size: 42px;
+            font-weight: 900;
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 14px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Section Headers */
+        .section-header {
+            margin-bottom: 50px;
+        }
+
+        .section-header h2 {
+            font-size: 42px;
+            font-weight: 800;
+            margin-bottom: 15px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .section-header p {
+            font-size: 18px;
+            color: var(--text-secondary);
+            max-width: 600px;
+        }
+
+        /* Features Grid */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 100px;
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            padding: 40px 30px;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            animation: fadeInUp 0.8s ease-out;
+            animation-fill-mode: both;
+        }
+
+        .feature-card:nth-child(1) { animation-delay: 0.2s; }
+        .feature-card:nth-child(2) { animation-delay: 0.3s; }
+        .feature-card:nth-child(3) { animation-delay: 0.4s; }
+        .feature-card:nth-child(4) { animation-delay: 0.5s; }
+        .feature-card:nth-child(5) { animation-delay: 0.6s; }
+        .feature-card:nth-child(6) { animation-delay: 0.7s; }
+
+        .feature-card:hover {
+            background: rgba(99, 102, 241, 0.1);
+            border-color: var(--primary);
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(99, 102, 241, 0.2);
+        }
+
+        .feature-icon {
+            font-size: 32px;
+            margin-bottom: 15px;
+        }
+
+        .feature-card h3 {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: white;
+        }
+
+        .feature-card p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Tech Stack */
+        .tech-stack {
+            margin-bottom: 100px;
+        }
+
+        .tech-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+        }
+
+        .tech-item {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            transition: all 0.3s ease;
+            animation: slideUp 0.8s ease-out;
+            animation-fill-mode: both;
+        }
+
+        .tech-item:nth-child(1) { animation-delay: 0.1s; }
+        .tech-item:nth-child(2) { animation-delay: 0.15s; }
+        .tech-item:nth-child(3) { animation-delay: 0.2s; }
+        .tech-item:nth-child(4) { animation-delay: 0.25s; }
+        .tech-item:nth-child(5) { animation-delay: 0.3s; }
+        .tech-item:nth-child(6) { animation-delay: 0.35s; }
+        .tech-item:nth-child(7) { animation-delay: 0.4s; }
+        .tech-item:nth-child(8) { animation-delay: 0.45s; }
+        .tech-item:nth-child(9) { animation-delay: 0.5s; }
+
+        .tech-item:hover {
+            background: rgba(99, 102, 241, 0.15);
+            border-color: var(--primary);
+            transform: translateY(-5px);
+        }
+
+        .tech-name {
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .tech-category {
+            font-size: 12px;
+            color: var(--primary);
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        /* Architecture Section */
+        .architecture {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            border-radius: 12px;
+            padding: 50px 40px;
+            margin-bottom: 100px;
+        }
+
+        .architecture h3 {
+            font-size: 24px;
+            margin-bottom: 30px;
+            color: var(--primary);
+        }
+
+        .pipeline-steps {
+            display: grid;
+            gap: 20px;
+        }
+
+        .pipeline-step {
+            display: flex;
+            align-items: flex-start;
+            gap: 20px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 8px;
+            border-left: 3px solid var(--primary);
+        }
+
+        .step-number {
+            min-width: 40px;
+            height: 40px;
+            background: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .step-content h4 {
+            font-weight: 700;
+            margin-bottom: 5px;
+            color: white;
+        }
+
+        .step-content p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Results Section */
+        .results {
+            margin-bottom: 100px;
+        }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+        }
+
+        .result-box {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            padding: 35px;
+            border-radius: 12px;
+            text-align: center;
+            animation: fadeInUp 0.8s ease-out;
+            animation-fill-mode: both;
+        }
+
+        .result-box:nth-child(1) { animation-delay: 0.2s; }
+        .result-box:nth-child(2) { animation-delay: 0.3s; }
+        .result-box:nth-child(3) { animation-delay: 0.4s; }
+        .result-box:nth-child(4) { animation-delay: 0.5s; }
+
+        .metric-name {
+            font-size: 14px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            font-weight: 600;
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+        }
+
+        .metric-value {
+            font-size: 48px;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+
+        .metric-desc {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        /* About Section */
+        .about {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            border-radius: 12px;
+            padding: 50px 40px;
+            margin-bottom: 100px;
+            animation: fadeInUp 0.8s ease-out 0.3s both;
+        }
+
+        .about h3 {
+            font-size: 28px;
+            font-weight: 800;
+            margin-bottom: 30px;
+            color: white;
+        }
+
+        .about-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 50px;
+        }
+
+        .about-text {
+            font-size: 16px;
+            color: var(--text-secondary);
+            line-height: 1.8;
+        }
+
+        .about-text p {
+            margin-bottom: 20px;
+        }
+
+        .about-highlights {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .highlight {
+            padding: 20px;
+            background: rgba(99, 102, 241, 0.1);
+            border-left: 3px solid var(--primary);
+            border-radius: 8px;
+        }
+
+        .highlight-title {
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--primary);
+        }
+
+        .highlight-text {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Contact Section */
+        .contact {
+            text-align: center;
+            margin-bottom: 100px;
+            animation: fadeInUp 0.8s ease-out 0.4s both;
+        }
+
+        .contact h2 {
+            font-size: 42px;
+            font-weight: 800;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .contact p {
+            font-size: 18px;
+            color: var(--text-secondary);
+            margin-bottom: 30px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .contact-links {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .contact-link {
+            padding: 12px 24px;
+            background: rgba(99, 102, 241, 0.1);
+            border: 2px solid var(--primary);
+            border-radius: 8px;
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .contact-link:hover {
+            background: var(--primary);
+            color: white;
+            transform: translateY(-3px);
+        }
+
+        /* Footer */
+        footer {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 40px 0;
+            text-align: center;
+            color: var(--text-secondary);
+            animation: fadeIn 0.8s ease-out 0.5s both;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 36px;
+            }
+
+            .about-content {
+                grid-template-columns: 1fr;
+            }
+
+            nav {
+                gap: 15px;
+            }
+
+            nav a {
+                font-size: 12px;
+            }
+
+            .cta-buttons {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+                text-align: center;
+            }
+
+            .section-header h2 {
+                font-size: 32px;
+            }
+
+            header {
+                flex-direction: column;
+                gap: 20px;
+            }
+        }
+
+        /* Smooth scrolling */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Scroll indicator */
+        .scroll-hint {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            opacity: 0.6;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Animated background -->
+    <div class="background-orbs">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+    </div>
+
+    <div class="container">
+        <!-- Header -->
+        <header>
+            <div class="logo">Digest-U/H</div>
+            <nav>
+                <a onclick="document.querySelector('.features-grid').scrollIntoView()">Features</a>
+                <a onclick="document.querySelector('.tech-stack').scrollIntoView()">Tech Stack</a>
+                <a onclick="document.querySelector('.results').scrollIntoView()">Results</a>
+                <a onclick="document.querySelector('.contact').scrollIntoView()">Contact</a>
+            </nav>
+        </header>
+
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="hero-content">
+                <h1>AI-Powered Multilingual Educational Summarizer</h1>
+                <p>A comprehensive Final Year Project (FYP) that transforms YouTube videos, PDFs, and documents into concise summaries, interactive MCQs, and keyword extraction in Roman Urdu & English—powered by LLaMA 3.3, embeddings, and custom-trained AI models.</p>
+                <div class="cta-buttons">
+                    <button class="btn btn-primary" onclick="document.querySelector('.about').scrollIntoView()">Learn More</button>
+                    <button class="btn btn-secondary" onclick="alert('Technical documentation: See Technical Reference v4 PDF')">Documentation</button>
+                </div>
+            </div>
+
+            <!-- Quick Stats -->
+            <div class="stats">
+                <div class="stat-card">
+                    <div class="stat-number">4</div>
+                    <div class="stat-label">AI Tiers</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">98</div>
+                    <div class="stat-label">Training Examples</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">16k+</div>
+                    <div class="stat-label">Urdu Dictionary</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">∞</div>
+                    <div class="stat-label">Always Works</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features Section -->
+        <section class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">🎬</div>
+                <h3>YouTube Summarization</h3>
+                <p>Paste any video URL and get instant summaries from transcripts with automatic fallback to Whisper transcription.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">📄</div>
+                <h3>Document Processing</h3>
+                <p>Upload PDFs and Word documents to extract and summarize lecture notes, slides, and educational materials instantly.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">✍️</div>
+                <h3>Manual Text Input</h3>
+                <p>Paste any educational content directly and get AI-powered summaries in seconds.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🇵🇰</div>
+                <h3>Roman Urdu Support</h3>
+                <p>Summaries generated in Roman Urdu (Urdu written in English letters) for Pakistani university students.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">❓</div>
+                <h3>MCQ Generation</h3>
+                <p>Automatically generates 3-50 multiple choice questions with answers and detailed explanations from content.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🔑</div>
+                <h3>Smart Keywords</h3>
+                <p>TF-IDF powered keyword extraction that identifies 8 most important topic concepts automatically.</p>
+            </div>
+        </section>
+
+        <!-- Tech Stack Section -->
+        <section class="tech-stack">
+            <div class="section-header">
+                <h2>Technology Stack</h2>
+                <p>Built with cutting-edge technologies and AI models</p>
+            </div>
+            <div class="tech-grid">
+                <div class="tech-item">
+                    <div class="tech-name">React.js 18</div>
+                    <div class="tech-category">Frontend</div>
+                </div>
+                <div class="tech-item">
+                    <div class="tech-name">Flask 3</div>
+                    <div class="tech-category">Backend</div>
+                </div>
+                <div class="tech-item">
+                    <div class="tech-name">LLaMA 3.3 70B</div>
+                    <div class="tech-category">LLM (Primary)</div>
+                </div>
+                <div class="tech-item">
+                    <div class="tech-name">Gemini API</div>
+                    <div class="tech-category">LLM (Fallback 1)</div>
+                </div>
+                <div class="tech-item">
+                    <div class="tech-name">Fine-tuned BART</div>
+                    <div class="tech-category">LLM (Fallback 2)</div>
+                </div>
+                <div class="tech-item">
+                    <div class="tech-name">MiniLM Embeddings</div>
+                    <div class="tech-category">Speed Optimization</div>
+                </div>
+                <div class="tech-item">
+                    <div class="tech-name">SQLite3</div>
+                    <div class="tech-category">Database</div>
+                </div>
+                <div class="tech-item">
+                    <div class="tech-name">OpenAI Whisper</div>
+                    <div class="tech-category">Transcription</div>
+                </div>
+                <div class="tech-item">
+                    <div class="tech-name">scikit-learn</div>
+                    <div class="tech-category">TF-IDF Keywords</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Architecture Section -->
+        <section class="architecture">
+            <h3>🔄 Complete Processing Pipeline</h3>
+            <div class="pipeline-steps">
+                <div class="pipeline-step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h4>Input Reception</h4>
+                        <p>User submits YouTube URL, PDF, DOCX, or pasted text via React interface.</p>
+                    </div>
+                </div>
+                <div class="pipeline-step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h4>Text Extraction</h4>
+                        <p>YouTube: YouTubeTranscriptAPI or Whisper • PDF: PyPDF2 • DOCX: python-docx</p>
+                    </div>
+                </div>
+                <div class="pipeline-step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h4>Embedding Compression ⭐ NEW</h4>
+                        <p>all-MiniLM-L6-v2 embeddings compress long content to 2,000 focused words before LLM call (3-4× speed improvement)</p>
+                    </div>
+                </div>
+                <div class="pipeline-step">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                        <h4>Four-Tier Summarization</h4>
+                        <p>Groq LLaMA → Gemini → Fine-tuned BART → MMR Extractive (never fails)</p>
+                    </div>
+                </div>
+                <div class="pipeline-step">
+                    <div class="step-number">5</div>
+                    <div class="step-content">
+                        <h4>Output Generation</h4>
+                        <p>English summary returned directly. Roman Urdu: LLM generates or Google Translate + 16,069-entry dictionary normalization</p>
+                    </div>
+                </div>
+                <div class="pipeline-step">
+                    <div class="step-number">6</div>
+                    <div class="step-content">
+                        <h4>MCQ & Keywords</h4>
+                        <p>LLM generates 3-50 structured MCQs with explanations. TF-IDF extracts 8 key topic concepts.</p>
+                    </div>
+                </div>
+                <div class="pipeline-step">
+                    <div class="step-number">7</div>
+                    <div class="step-content">
+                        <h4>Database Storage</h4>
+                        <p>All searches, MCQs, keywords, and evaluation metrics automatically saved to SQLite</p>
+                    </div>
+                </div>
+                <div class="pipeline-step">
+                    <div class="step-number">8</div>
+                    <div class="step-content">
+                        <h4>Display Results</h4>
+                        <p>React frontend displays summary, keyword badges, interactive MCQ cards with reveal functionality</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Results Section -->
+        <section class="results">
+            <div class="section-header">
+                <h2>Evaluation Results</h2>
+                <p>Automated evaluation metrics showing quality across all four AI tiers</p>
+            </div>
+            <div class="results-grid">
+                <div class="result-box">
+                    <div class="metric-name">Groq LLaMA 3.3</div>
+                    <div class="metric-value">0.48</div>
+                    <div class="metric-desc">ROUGE-1 Score (Best Quality)</div>
+                </div>
+                <div class="result-box">
+                    <div class="metric-name">Google Gemini API</div>
+                    <div class="metric-value">0.46</div>
+                    <div class="metric-desc">ROUGE-1 Score (Very Good)</div>
+                </div>
+                <div class="result-box">
+                    <div class="metric-name">Fine-tuned BART</div>
+                    <div class="metric-value">0.35</div>
+                    <div class="metric-desc">ROUGE-1 Score (Good, Offline)</div>
+                </div>
+                <div class="result-box">
+                    <div class="metric-name">MMR Extractive</div>
+                    <div class="metric-value">0.27</div>
+                    <div class="metric-desc">ROUGE-1 Score (Always Works)</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- About Section -->
+        <section class="about">
+            <h3>About This Project</h3>
+            <div class="about-content">
+                <div class="about-text">
+                    <p><strong>Digest-U/H</strong> is a Final Year Project (FYP) for BS Computer Science (2025-2026) designed to solve a real problem: Pakistani university students struggle to quickly summarize large volumes of educational content and create study materials.</p>
+                    <p>The project combines React frontend, Flask backend, and a sophisticated 4-tier AI pipeline that gracefully degrades from cutting-edge LLMs to offline extractive methods. Every single design decision prioritizes reliability—the system never completely fails.</p>
+                    <p>Key innovation: <strong>Embedding-based speed optimization</strong> (v4) that compresses long transcripts using semantic similarity before LLM processing, achieving 3-4× faster responses on long content.</p>
+                </div>
+                <div class="about-highlights">
+                    <div class="highlight">
+                        <div class="highlight-title">🎓 Educational Focus</div>
+                        <div class="highlight-text">Designed specifically for Pakistani university students. Supports Roman Urdu output and culturally relevant educational content.</div>
+                    </div>
+                    <div class="highlight">
+                        <div class="highlight-title">🔄 Reliability First</div>
+                        <div class="highlight-text">4-tier fallback system ensures the app always works, even if internet/APIs fail. MMR extractive method provides offline summarization.</div>
+                    </div>
+                    <div class="highlight">
+                        <div class="highlight-title">⚡ Performance</div>
+                        <div class="highlight-text">Embedding compression reduces LLM input by 10× for long content. Smart caching and batch processing optimize every request.</div>
+                    </div>
+                    <div class="highlight">
+                        <div class="highlight-title">📊 Rigorous Evaluation</div>
+                        <div class="highlight-text">Automated ROUGE + BLEU scoring on 98-example dataset. Every search evaluated automatically. Results stored in database.</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section class="contact">
+            <h2>Get In Touch</h2>
+            <p>Interested in learning more about this project? Check out the technical documentation or reach out with questions.</p>
+            <div class="contact-links">
+                <a href="mailto:your.email@example.com" class="contact-link">📧 Email</a>
+                <a href="#" class="contact-link">🔗 GitHub</a>
+                <a href="#" class="contact-link">💼 LinkedIn</a>
+                <a href="#" class="contact-link">🌐 Portfolio</a>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer>
+            <p>&copy; 2025-2026 Digest-U/H | Final Year Project | Computer Science | Built with React, Flask, and AI</p>
+        </footer>
+    </div>
+
+    <script>
+        // Smooth navigation feedback
+        document.querySelectorAll('nav a').forEach(link => {
+            link.addEventListener('click', function() {
+                document.querySelectorAll('nav a').forEach(a => a.style.color = 'var(--text-secondary)');
+                this.style.color = 'var(--primary)';
+            });
+        });
+
+        // Add scroll animation for elements
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        // Observe all feature cards and result boxes
+        document.querySelectorAll('.feature-card, .result-box').forEach(el => {
+            observer.observe(el);
+        });
+    </script>
+</body>
+</html>
